@@ -1,0 +1,28 @@
+{
+    "QuizId":  1001,
+    "Title":  "Teste Dein IT-Allgemeinwissen - Teil 2",
+    "Category": "Allgemeine IT",
+    "Author":  "The real Pemo",
+    "Language": "de",
+    "CreationDate":  "02/22/2018",
+    "Cards":  [
+                  {
+                      "Question":  "Was ist ein Mibibyte?",
+                      "Level":  0,
+                      "AnswerId":  [0],
+                      "Options":  ["Die offizielle Einheit fuer 1048576 Bytes", "Die offizielle Einheit fuer eine Speichergroeße fuer SmartPhone-Speicherkarten", "Bezeichnung fuer Restposten-Ramschware aus Indien","Spielt nur bei Quantencomputern eine Rolle"]
+                  },
+                  {
+                      "Question":  "Was ist der Workingset?",
+                      "Level":  0,
+                      "AnswerId":  [0],
+                      "Options":  ["Ein anderer Begriff fuer die Arbeitsspeicherbelegung eines Prozesses","Der Satz an Arbeit, der von einem IT-Prozess pro Sekunde abgearbeitet wird", "Ein funktionierender Satz an Einstellungen (egal was)", "Eine provisorische Arbeitsumgebung"]
+                  },
+                  {
+                      "Question":  "Was versteht man unter einem Thread?",
+                      "Level":  0,
+                      "AnswerId":  [0],
+                      "Options":  ["Ein Ausfuehrungsfaden innerhalb eines Prozesses", "Eine Bedrohung durch Viren", "Ein vollständig geloeschtes (also geschreddertes) Word-Dokument"]
+                  }
+              ]
+}

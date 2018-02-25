@@ -1,0 +1,40 @@
+Quiz::
+ID::1001
+Title:: "Teste Dein IT-Allgemeinwissen - Teil 1"
+Category:: "Allgemeine IT"
+Author::  "The real Pemo"
+CreationDate::  "02/22/2018"
+
+Card::
+Question::  "Was ist ein Mibibyte?"
+Level::  0
+AnswerId::  0,1
+Options::
+Die offizielle Einheit für eine Speichergröße für SmartPhone-Speicherkarten
+Bezeichnung für Ramschware aus Indien
+Spielt nur bei Quantencomputern eine Rolle"
+CardEnd::
+
+Card::
+Question::  "Was ist der Workingset?"
+Level::  0
+AnswerId::  0
+Options::
+"Ein anderer Begriff für die Arbeitsspeicherbelegung eines Prozesses"
+"Der Satz an Arbeit, der von einem IT-Prozess pro Sekunde abgearbeitet wird"
+"Ein funktionierender Satz an Einstellungen (egal was)"
+"Eine provisorische Arbeitsumgebung"
+CardEnd::
+
+Card::
+Question::  "Was versteht man unter einem Thread?"
+Level::  0
+AnswerId::  0
+Options::
+"Ein Ausführungsfaden innerhalb eines Prozesses"
+"Eine Bedrohung durch Viren"
+"Ein vollständig gelöschtes (also geschreddertes) Word-Dokument"
+CardEnd::
+
+QuizEnd::
+
