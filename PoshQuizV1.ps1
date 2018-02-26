@@ -83,15 +83,30 @@ function StartQuiz
     [Int32]$QuizId = Read-Host $QuizInitPrompt
     if ($QuizTable.Keys -contains $QuizId)
     {
-        $Script:CurrentQuiz = $QuizTable[$QuizId]
+        # hashtable type conversion necessary because of OrderedDictionary type
+        $Script:CurrentQuiz = ([Hashtable]$QuizTable)[$QuizId]
         Invoke-QuizRun -Quiz $CurrentQuiz
-        ShowMenu $QuizEndMenu
+        do {
+            $ExitMode = $false
+            $Choice = ShowMenu $QuizEndMenu
+            switch($Choice)
+            {
+                1 {
+                    Invoke-QuizRun -Quiz $CurrentQuiz
+                }
+                2 {
+                    Invoke-QuizRun -Quiz $CurrentQuiz -SolvedOnly
+                }
+                "Q" { $ExitMode = $true}
+            }
+        } until ($ExitMode)
     }
     else {
         Write-Host -Fore Red $PoshQuizMsg.QuizNotFoundMsg
     }
 }
 
+# load all quizzes
 LoadQuiz -Verbose
 
 # Start the quiz input loop

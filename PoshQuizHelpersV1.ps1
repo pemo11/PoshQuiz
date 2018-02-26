@@ -178,6 +178,8 @@ function Show-QuizCard
     $AnswerId = ([Byte][Char]$Answer) - 65
     if ($Card.AnswerId -contains $AnswerId)
     {
+        # Mark Card as solved
+        $Card.IsSolved = $true
         Write-Host 
         Write-Host -Fore Green "This answer is very good"
         Write-Host 
@@ -221,9 +223,16 @@ General notes
 function Invoke-QuizRun
 {
     [CmdletBinding()]
-    param([Quiz]$Quiz)
+    param([Quiz]$Quiz, [Switch]$SolvedOnly)
+    if ($SolvedOnly)
+    {
+        $AllCards = @($CurrentQuiz.Cards | Where-Object IsSolved -eq $false)
+    }
+    else {
+        $AllCards = @($CurrentQuiz.Cards)        
+    }
     # Cards is a List`QuizCard not an array
-    @($CurrentQuiz.Cards).ForEach{
+    $AllCards.ForEach{
         Show-QuizCard $_
     }
     Show-QuizRunResult

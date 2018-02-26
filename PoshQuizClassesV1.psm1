@@ -25,6 +25,7 @@ class QuizCard
     [Int[]]$AnswerId
     [String[]]$Options
     [QuizCardType]$Type
+    [Bool]$IsSolved
 
     QuizCard([Int]$OptionsCount, [QuizCardType]$CardType = [QuizCardType]::MultipleChoiceSingle)
     {
