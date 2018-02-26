@@ -178,11 +178,11 @@ function Show-QuizCard
     $AnswerId = ([Byte][Char]$Answer) - 65
     if ($Card.AnswerId -contains $AnswerId)
     {
-        # Mark Card as solved
-        $Card.IsSolved = $true
         Write-Host 
         Write-Host -Fore Green "This answer is very good"
         Write-Host 
+        # Mark Card as solved
+        $Card.IsSolved = $true
         $Script:CorrectAnswerCount++
     }
     else
@@ -190,6 +190,7 @@ function Show-QuizCard
         Write-Host 
         Write-Host -Fore Red "This answer does not address the truth"    
         Write-Host 
+        $Card.IsSolved = $false
         $Script:WrongAnswerCount++
     }
 }
@@ -205,7 +206,11 @@ function Show-QuizRunResult
     Write-Host ([String]::new("=", 80))
     Write-Host -Fore Green ("Correct Answers: {0}" -f $CorrectAnswerCount)
     Write-Host -Fore Red ("Wrong Answers: {0}" -f $WrongAnswerCount)
-    $Quota = $CorrectAnswerCount / ($CorrectAnswerCount + $WrongAnswerCount) 
+    $Quota = 0
+    if ($CorrectAnswerCount -gt 0 -or $WrongAnswerCount -gt 0)
+    {
+        $Quota = $CorrectAnswerCount / ($CorrectAnswerCount + $WrongAnswerCount) 
+    }
     Write-Host -Fore Yellow ("Quota: {0:f}" -f $Quota)
     Write-Host ([String]::new("=", 80))
 }
@@ -224,6 +229,8 @@ function Invoke-QuizRun
 {
     [CmdletBinding()]
     param([Quiz]$Quiz, [Switch]$SolvedOnly)
+    $Script:CorrectAnswerCount = 0
+    $Script:WrongAnswerCount = 0
     if ($SolvedOnly)
     {
         $AllCards = @($CurrentQuiz.Cards | Where-Object IsSolved -eq $false)
@@ -231,9 +238,30 @@ function Invoke-QuizRun
     else {
         $AllCards = @($CurrentQuiz.Cards)        
     }
+    if ($AllCards.Count -eq 0)
+    {
+        Write-Host -Fore Red "No cards available for this Quizz"
+    }
     # Cards is a List`QuizCard not an array
     $AllCards.ForEach{
         Show-QuizCard $_
     }
     Show-QuizRunResult
+}
+
+<#
+ .Synopsis
+ Shows only the questions of a quizz
+#>
+function Get-QuizQuestions
+{
+    [CmdletBinding()]
+    param([Quiz]$Quiz)
+    Write-Host
+    Write-Host ([String]::new("=", 80))
+    @($Quiz.Cards).ForEach{
+        Write-Host "Q: $($_.Question)"
+    }
+    Write-Host ([String]::new("=", 80))
+    Write-Host
 }

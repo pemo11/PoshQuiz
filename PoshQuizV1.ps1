@@ -1,6 +1,6 @@
 <#
  .Synopsis
- A simple quiz script - Version 0.2
+ A simple quiz script - Version 0.3
 #>
 
 Import-LocalizedData -FileName PoshQuizMsgTable.psd1 -BindingVariable PoshQuizMsg
@@ -30,6 +30,7 @@ function LoadQuiz
 $MainMenu = @()
 $MainMenu += "1 - $($PoshQuizMsg.ShowMenuShowQuizzesMsg)"
 $MainMenu += "2 - $($PoshQuizMsg.ShowMenuStartQuizMsg)"
+$MainMenu += "3 - $($PoshQuizMsg.ShowMenuShowCardsMsg)"
 $MainMenu += "Q - $($PoshQuizMsg.ShowMenuEndMsg)"
 
 $QuizEndMenu = @()
@@ -78,7 +79,7 @@ Start a quizz
 function StartQuiz
 {
     [CmdletBinding()]
-    param([Object]$Quiz)
+    param()
     $QuizInitPrompt = "Choose a Quiz by ID (" + ($QuizTable.Keys -join ",") + ")"
     [Int32]$QuizId = Read-Host $QuizInitPrompt
     if ($QuizTable.Keys -contains $QuizId)
@@ -91,15 +92,35 @@ function StartQuiz
             $Choice = ShowMenu $QuizEndMenu
             switch($Choice)
             {
-                1 {
+                "1" {
                     Invoke-QuizRun -Quiz $CurrentQuiz
                 }
-                2 {
+                "2" {
                     Invoke-QuizRun -Quiz $CurrentQuiz -SolvedOnly
                 }
                 "Q" { $ExitMode = $true}
             }
         } until ($ExitMode)
+    }
+    else {
+        Write-Host -Fore Red $PoshQuizMsg.QuizNotFoundMsg
+    }
+}
+
+<#
+.Synopsis
+Shows only the questions of a quizz
+#>
+function ShowQuizQuestions
+{
+    [CmdletBinding()]
+    param()
+    $QuizInitPrompt = "Choose a Quiz by ID (" + ($QuizTable.Keys -join ",") + ")"
+    [Int32]$QuizId = Read-Host $QuizInitPrompt
+    if ($QuizTable.Keys -contains $QuizId)
+    {
+        $Script:CurrentQuiz = ([Hashtable]$QuizTable)[$QuizId]
+        Get-QuizQuestions -Quiz $CurrentQuiz
     }
     else {
         Write-Host -Fore Red $PoshQuizMsg.QuizNotFoundMsg
@@ -123,6 +144,9 @@ do
         "2" {
             StartQuiz
             break
+        }
+        "3" {
+            ShowQuizQuestions
         }
         "Q" { $ExitMode = $true}
     }
