@@ -13,8 +13,9 @@ Set-StrictMode -Version Latest
 [QuizCard]$CurrentCard = $null
 $QuizMode = $false
 $CardMode = $false
-$CorrectAnswerCount = 0
-$WrongAnswerCount = 0
+$CorrectCardCount = 0
+$WrongCardCount = 0
+$SkippedCardCount = 0
 
 <#
 .SYNOPSIS
@@ -38,6 +39,45 @@ function TestCardMode
     {
         throw "Element only valid for a Quiz card"
     }
+}
+
+<#
+.SYNOPSIS
+Converts a Json definition to a Quiz object
+.Notes
+Necessary because of later type conversione errors when doing ConvertFrom-JSON
+#>
+function ConvertTo-PoshQuiz
+{
+    [CmdletBinding()]
+    param([Parameter(Mandatory=$true,ParameterSetname="File")][String]$Path,
+          [Parameter(Mandatory=$true,ParameterSetname="Text")][String]$JSON)
+    if ($Path)
+    {
+        $JSONObject = Get-Content -Path $Path -Encoding Default | ConvertFrom-Json
+    }
+    if ($JSON)
+    {
+        $JSONObject = $JSON | ConvertFrom-Json
+    }
+    $Quiz = [Quiz]::new()
+    $Quiz.Author = $JSONObject.Author
+    $Quiz.Category = $JSONObject.Category
+    $Quiz.CreationDate = $JSONObject.CreationDate
+    $Quiz.Language = $JSONObject.Language
+    $Quiz.QuizId = $JSONObject.QuizId
+    $Quiz.Title = $JSONObject.Title
+    foreach($Card in $JSONObject.Cards)
+    {
+        $QuizCard = [QuizCard]::new($Card.Options.Count, $Card.Type)
+        $QuizCard.AnswerHint = $Card.Hint
+        $QuizCard.AnswerId = $Card.AnswerId
+        $QuizCard.Level = $Card.Level
+        $QuizCard.Question = $Card.Question
+        $QuizCard.Options = $Card.Options
+        $Quiz.Cards.Add($QuizCard)
+    }
+    return $Quiz
 }
 
 <#
@@ -131,9 +171,19 @@ function Read-PoshQuiz
                     $CurrentCard.Level = $KeywordValue
                 }
 
+                "Type" {
+                    TestCardMode
+                    $CurrentCard.Type = $KeywordValue
+                }
+
                 "AnswerID" {
                     TestCardMode
                     $CurrentCard.AnswerId = $KeywordValue
+                }
+
+                "Hint" {
+                    TestCardMode
+                    $CurrentCard.Hint = $KeywordValue
                 }
 
                 "Options" {
@@ -161,38 +211,72 @@ Shows the content of a quiz card
 #>
 function Show-QuizCard
 {
-    # Due to JSON type conversion this is not a QuizCard object
-    param([PSCustomObject]$Card)
+    # Because of the special JSON type conversion this is a QuizCard object
+    param([QuizCard]$Card)
+    $OptionsCount = $Card.Options.Count
     Write-Host ([String]::new("=", 80))
     Write-Host $Card.Question
     Write-Host ([String]::new("=", 80))
-    $i=0
-    $Card.Options.ForEach{
-        $i++
-        $Outline = "$([Char][Byte]($i+64)) $_"
+    for($i = 0; $i -lt $OptionsCount;$i++)
+    {
+        $Option = $Card.Options[$i]
+        $Outline = "$([Char][Byte]($i+65)) - $Option"
         Write-Host $Outline
     }
     Write-Host ([String]::new("=", 80))
-    $AnswerPrompt = "Your Answer ($((1..($i-1)).ForEach{[Char][Byte]($_+64)} -join ",") or $([Char][Byte]($i+64)))"
-    $Answer = Read-Host $AnswerPrompt
-    $AnswerId = ([Byte][Char]$Answer) - 65
-    if ($Card.AnswerId -contains $AnswerId)
-    {
-        Write-Host 
-        Write-Host -Fore Green "This answer is very good"
-        Write-Host 
-        # Mark Card as solved
-        $Card.IsSolved = $true
-        $Script:CorrectAnswerCount++
-    }
-    else
-    {
-        Write-Host 
-        Write-Host -Fore Red "This answer does not address the truth"    
-        Write-Host 
-        $Card.IsSolved = $false
-        $Script:WrongAnswerCount++
-    }
+    $ExitMode = $false
+    do {
+        $AnswerPrompt = "Your Answer ($((1..($i-1)).ForEach{[Char][Byte]($_+64)} -join ",") or $([Char][Byte]($i+64))) or ! or ?"
+        $Answer = Read-Host $AnswerPrompt
+        $Answer = $Answer.ToUpper()
+        switch ($Answer)
+        {
+            # show the answer hint and stay with current card
+            "?" {
+                    Write-Host ([String]::new("*", 80))
+                    Write-Host $Card.AnswerHint
+                    Write-Host ([String]::new("*", 80))
+                    break
+            }
+            # show all answers and show next card
+            "!" {
+                    Write-Host ([String]::new("-", 80))
+                    Write-Host "The correct answers for the current quizz card:"
+                    Write-Host
+                    for($i=1;$i -le $Card.AnswerId.Count;$i++)
+                    {
+                        $Outline = "$i) $($Card.Options[$i-1])"
+                        Write-Host $Outline
+                    }
+                    Write-Host ([String]::new("-", 80))
+                    $Script:SkippedCardCount++
+                    $ExitMode = $true
+                    break
+            }
+            # Option input? (A, B, C etc.)
+            { [Byte][Char]$_ -gt 64 -and (([Byte][Char]$_) - 64) -lt (65+$OptionsCount)} {
+                $AnswerId = ([Byte][Char]$Answer) - 65
+                if ($Card.AnswerId -contains $AnswerId)
+                {
+                    Write-Host 
+                    Write-Host -Fore Green "This answer is very good"
+                    Write-Host 
+                    # Mark Card as solved
+                    $Card.IsSolved = $true
+                    $Script:CorrectCardCount++
+                }
+                else
+                {
+                    Write-Host 
+                    Write-Host -Fore Red "This answer does not address the truth"    
+                    Write-Host
+                    $Script:WrongCardCount++
+                    $Card.IsSolved = $false
+                }
+                $ExitMode = $true
+            }
+        }
+    } while ($ExitMode -ne $true)
 }
 
 <#
@@ -204,12 +288,13 @@ function Show-QuizRunResult
     [CmdletBinding()]
     param()
     Write-Host ([String]::new("=", 80))
-    Write-Host -Fore Green ("Correct Answers: {0}" -f $CorrectAnswerCount)
-    Write-Host -Fore Red ("Wrong Answers: {0}" -f $WrongAnswerCount)
+    Write-Host -Fore Green ("Correct Answers: {0}" -f $CorrectCardCount)
+    Write-Host -Fore Red ("Wrong Answers: {0}" -f $WrongCardCount)
+    Write-Host -Fore Magenta ("Skipped Cards: {0}" -f $SkippedCardCount)
     $Quota = 0
-    if ($CorrectAnswerCount -gt 0 -or $WrongAnswerCount -gt 0)
+    if ($CorrectCardCount -gt 0 -or $WrongCardCount -gt 0)
     {
-        $Quota = $CorrectAnswerCount / ($CorrectAnswerCount + $WrongAnswerCount) 
+        $Quota = $CorrectCardCount / ($CorrectCardCount + $WrongCardCount) 
     }
     Write-Host -Fore Yellow ("Quota: {0:f}" -f $Quota)
     Write-Host ([String]::new("=", 80))
@@ -229,8 +314,9 @@ function Invoke-QuizRun
 {
     [CmdletBinding()]
     param([Quiz]$Quiz, [Switch]$SolvedOnly)
-    $Script:CorrectAnswerCount = 0
-    $Script:WrongAnswerCount = 0
+    $Script:CorrectCardCount = 0
+    $Script:WrongCardCount = 0
+    $Script:SkippedCardCount = 0
     if ($SolvedOnly)
     {
         $AllCards = @($CurrentQuiz.Cards | Where-Object IsSolved -eq $false)

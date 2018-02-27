@@ -7,5 +7,5 @@ ConvertFrom-StringData -StringData @"
     ShowMenuShowCardsMsg = Show all questions of a quizz
     ShowMenuEndMsg = The End
     QuizEndTryAgainMsg = Run this Quizz again?
-    QuizEndTryWrongAnswersMsg = Repeat only the wrong answers?
+    QuizEndTryWrongAnswersMsg = Repeat only the wrong and skipped cards?
 "@

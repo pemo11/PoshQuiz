@@ -6,21 +6,26 @@ Author::  "The real Pemo"
 CreationDate::  "02/22/2018"
 
 Card::
-Question::  "Was ist ein Mibibyte?"
+Question::  "Was ist ein MiB?"
 Level::  0
+Type:: MultipleChoice
 AnswerId::  0,1
+Hint:: Es ist eine offizielle Größeneinheit
 Options::
-Die offizielle Einheit fÃ¼r eine SpeichergrÃ¶ÃŸe fÃ¼r SmartPhone-Speicherkarten
-Bezeichnung fÃ¼r Ramschware aus Indien
+Genau 1048576 Bytes
+Die offizielle Bezeichnung für Megabyte
+Ein Men in Black aus dem gleichnamigen Film
 Spielt nur bei Quantencomputern eine Rolle"
 CardEnd::
 
 Card::
 Question::  "Was ist der Workingset?"
 Level::  0
+Type:: MultipleChoice
 AnswerId::  0
+Hint:: Spielt bei Prozessen eine Rolle
 Options::
-"Ein anderer Begriff fÃ¼r die Arbeitsspeicherbelegung eines Prozesses"
+"Ein anderer Begriff für die Arbeitsspeicherbelegung eines Prozesses"
 "Der Satz an Arbeit, der von einem IT-Prozess pro Sekunde abgearbeitet wird"
 "Ein funktionierender Satz an Einstellungen (egal was)"
 "Eine provisorische Arbeitsumgebung"
@@ -29,11 +34,13 @@ CardEnd::
 Card::
 Question::  "Was versteht man unter einem Thread?"
 Level::  0
+Type:: MultipleChoice
 AnswerId::  0
+Hint:: Spielt bei Prozessen eine Rolle
 Options::
-"Ein AusfÃ¼hrungsfaden innerhalb eines Prozesses"
+"Ein Ausführungsfaden innerhalb eines Prozesses"
 "Eine Bedrohung durch Viren"
-"Ein vollstÃ¤ndig gelÃ¶schtes (also geschreddertes) Word-Dokument"
+"Ein vollständig gelöschtes (also geschreddertes) Word-Dokument"
 CardEnd::
 
 QuizEnd::

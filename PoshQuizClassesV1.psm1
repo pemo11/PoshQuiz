@@ -11,10 +11,10 @@ enum QuizCardLevel
     Expert
 }
 
+# At the moment there is only one type
 enum QuizCardType
 {
-    MultipleChoiceSingle
-    MultipleChoiceMulti
+    MultipleChoice
 }
 
 # represents a single quiz cards
@@ -26,11 +26,13 @@ class QuizCard
     [String[]]$Options
     [QuizCardType]$Type
     [Bool]$IsSolved
+    [Bool]$IsHintRequested
+    [String]$AnswerHint
 
-    QuizCard([Int]$OptionsCount, [QuizCardType]$CardType = [QuizCardType]::MultipleChoiceSingle)
+    QuizCard([Int]$OptionsCount, [QuizCardType]$Type = [QuizCardType]::MultipleChoice)
     {
         $this.Options = New-Object -TypeName "String[]" -ArgumentList $OptionsCount
-        $this.Type = $CardType
+        $this.Type = $Type
     }
 
     QuizCard()

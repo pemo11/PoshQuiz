@@ -1,6 +1,6 @@
 <#
  .Synopsis
- A simple quiz script - Version 0.3
+ A simple quiz script - Version 0.4
 #>
 
 Import-LocalizedData -FileName PoshQuizMsgTable.psd1 -BindingVariable PoshQuizMsg
@@ -20,7 +20,8 @@ function LoadQuiz
     param([String]$QuizPath = ".\Quizzes")
 
     Get-ChildItem -path $QuizPath\*.json | ForEach-Object {
-        $Quiz = (Get-Content -Path $_.FullName -Encoding Default ) | ConvertFrom-Json
+        # $Quiz = (Get-Content -Path $_.FullName -Encoding Default ) | ConvertFrom-Json
+        $Quiz = ConvertTo-PoshQuiz -Path $_.FullName
         # $Script:QuizTable.Add($Quiz.QuizId, $Quiz)
         $Script:QuizTable += @{$Quiz.QuizId = $Quiz}
     }
@@ -47,7 +48,7 @@ function ShowMenu
     [CmdletBinding()]
     param([String[]]$MenuItems)
 
-    Foreach($MenuItem in $MenuItems)
+    foreach($MenuItem in $MenuItems)
     {
         Write-Host $MenuItem
     }
@@ -64,6 +65,7 @@ function ShowQuizTable
 {
     [CmdletBinding()]
     param()
+    Write-Host
     $i = 0
     $QuizTable.Values.ForEach{
         $Outline = "{0} - {1}/{2} {3}" -f ++$i, $_.Title, $_.QuizID, $_.Author
@@ -119,6 +121,9 @@ function ShowQuizQuestions
     [Int32]$QuizId = Read-Host $QuizInitPrompt
     if ($QuizTable.Keys -contains $QuizId)
     {
+        # Leads to a strange type conversion error ParameterBindingArgumentTransformationException
+        # System.Object[] cannot convert into System.Collections.Generic.List`[QuizCard]
+        # Very strange: Assignent works in the console during debugging - tricky type conversion error
         $Script:CurrentQuiz = ([Hashtable]$QuizTable)[$QuizId]
         Get-QuizQuestions -Quiz $CurrentQuiz
     }
