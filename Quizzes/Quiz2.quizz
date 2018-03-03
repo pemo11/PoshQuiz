@@ -1,0 +1,73 @@
+Quiz::
+ID::1003
+Title:: "PowerShell Basics - Teil 1"
+Category:: "PowerShell"
+Author::  "The real Pemo"
+CreationDate::  "03/03/2018"
+
+Card::
+Question::  "In welchem Jahr wurde die Version 1.0 veröffentlicht?"
+Level::  0
+Type:: MultipleChoice
+AnswerId::  0
+Hint:: Die PowerShell feierte vor nicht zu langer Zeit 10 jähriges Jubiläum
+Options::
+2006
+2009
+2012
+Vor langer Zeit in einer fernen Galaxies
+CardEnd::
+
+Card::
+Question::  "Wie wird die Versionsnummer der PowerShell abgefragt?"
+Level::  0
+Type:: MultipleChoice
+AnswerId::  0
+Hint:: Es ist gibt eine Variable, deren Namen mit Table endet
+Options::
+Über die Variable PSVersionTable
+Über einen Registry-Eintrag
+Über die Dateigenschaften von Powershell.exe
+Das Abfragen der Versionsnummer ist nur in der Pro Edition möglich
+CardEnd::
+
+Card::
+Question::  "Wie wird der Eingabeprompt neu belegt"
+Level::  0
+Type:: MultipleChoice
+AnswerId::  1
+Hint:: Über eine Function, die nicht ausgeführt wird
+Options::
+Über die Variable Prompt
+Über die Function Prompt
+Über das Set-Prompt-Cmdlet
+Über die Set-CurrentPrompt Function
+CardEnd::
+
+Card::
+Question::  "Welche Rolle spielt die Host-Anwendung für die PowerShell"
+Level::  0
+Type:: MultipleChoice
+AnswerId::  1
+Hint:: Ohne Host-Anwendung keine Interaktion
+Options::
+Spielt nur eine Rolle, wenn die PowerShell gehostet wird
+Der Anwendungsrahmen, in dem die PowerShell ausgeführt wird
+Keine, dies ist lediglich eine Option für Entwickler
+Erlaubt eine sichere Ausführung (Sandbox-Prinzip)
+CardEnd::
+
+Card::
+Question::  "Wie wird der Eingabeprompt in der ISE neu belegt"
+Level::  0
+Type:: MultipleChoice
+AnswerId::  0
+Hint:: Die Lösung ist unabhängig vom PowerShell-Host
+Options::
+Wie üblich
+Über die Function ISEPrompt
+Mit Hilfe einer XML-Datei
+Über die Variable PSISEPrompt
+CardEnd::
+
+QuizEnd::

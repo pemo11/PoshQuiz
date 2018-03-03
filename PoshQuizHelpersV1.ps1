@@ -19,7 +19,7 @@ $SkippedCardCount = 0
 
 <#
 .SYNOPSIS
-Tests if a quiz is processed
+Tests if a quizz is processed
 #>
 function TestQuizMode
 {
@@ -104,7 +104,8 @@ function Read-PoshQuiz
         if ($CurLine -match $Regex)
         {
             # try to match a value following the keyword too
-            $Regex = "(\w+)::\s*`"*([\w\s?,/-]+)`"*"
+            # Important: The dot has to be escaped with \\
+            $Regex = "(\w+)::\s*`"*([\w\s?,/-\\.]+)`"*"
             if ($CurLine -match $Regex)
             {
                 $KeywordValue = $Matches.2

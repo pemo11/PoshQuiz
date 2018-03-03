@@ -27,7 +27,7 @@ class QuizCard
     [QuizCardType]$Type
     [Bool]$IsSolved
     [Bool]$IsHintRequested
-    [String]$AnswerHint
+    [String]$Hint
 
     QuizCard([Int]$OptionsCount, [QuizCardType]$Type = [QuizCardType]::MultipleChoice)
     {

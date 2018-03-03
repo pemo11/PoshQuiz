@@ -19,10 +19,11 @@ function LoadQuiz
     [CmdletBinding()]
     param([String]$QuizPath = ".\Quizzes")
 
-    Get-ChildItem -path $QuizPath\*.json | ForEach-Object {
+    Get-ChildItem -path $QuizPath\*.quizz | ForEach-Object {
         # $Quiz = (Get-Content -Path $_.FullName -Encoding Default ) | ConvertFrom-Json
-        $Quiz = ConvertTo-PoshQuiz -Path $_.FullName
+        # $Quiz = ConvertTo-PoshQuiz -Path $_.FullName
         # $Script:QuizTable.Add($Quiz.QuizId, $Quiz)
+        $Quiz = Read-PoshQuiz -Path $_.FullName
         $Script:QuizTable += @{$Quiz.QuizId = $Quiz}
     }
     Write-Verbose ($PoshQuizMsg.QuizLoadedMsg -f $QuizTable.Values.Count)
